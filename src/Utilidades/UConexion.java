@@ -14,7 +14,7 @@ public class UConexion {
 	
 	private UConexion(){
 		
-		this.myConexion = null;
+		myConexion = null;
 		
 		try {
 			//creo objeto de tipo properties y recupero los datos del archivo frameword.properties
@@ -30,7 +30,7 @@ public class UConexion {
 			String password = p.getProperty("password");
 			
 			//me conecto a la base con el string + usuario + contraseña
-			this.myConexion = DriverManager.getConnection(rutaBD,user,password);
+			myConexion = DriverManager.getConnection(rutaBD,user,password);
 			System.out.println("Se conecto correctamente");
 						
 		} catch (SQLException e) {
