@@ -21,7 +21,7 @@ public class UBean {
 		String strSet = "set"+ att.substring(0,1).toUpperCase() + att.substring(1).toLowerCase();
 		Method metSet;
 		try {
-			metSet = o.getClass().getDeclaredMethod(strSet);
+			metSet = o.getClass().getDeclaredMethod(strSet, valor.getClass());
 			metSet.invoke(o, valor);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -35,7 +35,7 @@ public class UBean {
 		Object objGet = new Object();
 		try {
 			metGet = o.getClass().getDeclaredMethod(strGet);
-			metGet.invoke(o, objGet);
+			objGet = metGet.invoke(o);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

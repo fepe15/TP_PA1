@@ -1,10 +1,22 @@
+import Servicios.Consultas;
+import Utilidades.UBean;
 
 public class MainClass {
 
 	public static void main(String[] args) {
 		
-	//	Persona p = new Persona();
+		Persona p = new Persona();
 		
+		p.setId(5);
+		p.setNombre("Carlos");
+		p.setApellido("Peralta");
+		p.setDni(122);
+
+		
+		
+		
+		
+		Consultas.modificar(p);
 		
 	//	List<Field> listaAtri = new ArrayList<Field>();
 	//	listaAtri = UBean.obtenerAtributos(p);
