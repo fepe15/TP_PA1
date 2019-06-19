@@ -1,9 +1,12 @@
 package Servicios;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,5 +133,92 @@ public class Consultas {
 					e.printStackTrace();
 			}
 		}
-	
+		
+		
+		public static void eliminar(Object o){
+			
+			atributos = new ArrayList<>();	
+			Connection connection = UConexion.getConnection();
+			Integer id=0;
+			Class c = o.getClass();
+			
+			//Retorno las columnas del array
+			atributos = UBean.obtenerAtributos(o);
+			
+			StringBuilder query= new StringBuilder(); 
+		    query.append("Delete from "); 
+			
+			//concateno el nombre de la tabla
+			query.append(((Tabla)c.getAnnotation(Tabla.class)).nombre());			
+			
+			try {
+				for (Field field : atributos) {
+					if(field.getAnnotation(Id.class) != null) {
+						id = (Integer) UBean.ejecutarGet(o, field.getName());
+					}
+				} 
+				query.append(" where id=" +  id );
+				System.out.println(query.toString());
+				PreparedStatement st = connection.prepareStatement(query.toString());
+				st.execute();
+				connection.close();
+			} 	
+			catch (SecurityException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}
+		}
+		
+		public static Object obtenerPorId(Class clase, Object id){
+			
+			atributos = new ArrayList<>();	
+			Connection connection = UConexion.getConnection();
+			Object objRetorno = new Object();
+			StringBuilder query= new StringBuilder(); 
+		    query.append("Select * from "); 
+			
+			//concateno el nombre de la tabla
+			query.append(((Tabla)clase.getAnnotation(Tabla.class)).nombre());
+			
+			Constructor[] constructors = clase.getConstructors();
+			
+			for (Constructor constructor : constructors) {
+				if (constructor.getParameterCount() == 0 ) {
+					try {
+						objRetorno = constructor.newInstance();
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			query.append("where id=" + id);
+			try {
+				PreparedStatement st = connection.prepareStatement("select * from mitabla");
+				ResultSet queryRes = st.executeQuery();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		/*	try {
+				for (Field field : atributos) {
+					if(field.getAnnotation(Id.class) != null) {
+						id = (Integer) UBean.ejecutarGet(o, field.getName());
+					}
+				} 
+				query.append(" where id=" +  id );
+				System.out.println(query.toString());
+				PreparedStatement st = connection.prepareStatement(query.toString());
+				st.execute();
+				connection.close();
+			} 	
+			catch (SecurityException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}   */ 
+		return objRetorno;
+		}
 }

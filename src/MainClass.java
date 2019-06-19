@@ -16,7 +16,7 @@ public class MainClass {
 		
 		
 		
-		Consultas.modificar(p);
+		Consultas.eliminar(p);
 		
 	//	List<Field> listaAtri = new ArrayList<Field>();
 	//	listaAtri = UBean.obtenerAtributos(p);
