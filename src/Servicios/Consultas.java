@@ -137,7 +137,8 @@ public class Consultas {
 		
 		public static void eliminar(Object o){
 			
-			atributos = new ArrayList<>();	
+			ArrayList<Columna> columnas = new ArrayList<Columna>();
+			Field IdTraido = null;
 			Connection connection = UConexion.getConnection();
 			Integer id=0;
 			Class c = o.getClass();
@@ -171,14 +172,18 @@ public class Consultas {
 		
 		public static Object obtenerPorId(Class clase, Object id){
 			
-			atributos = new ArrayList<>();	
 			Connection connection = UConexion.getConnection();
+			atributos = new ArrayList<>();	
+			Field IdTraida = null;
 			Object objRetorno = new Object();
 			StringBuilder query= new StringBuilder(); 
+			
 		    query.append("Select * from "); 
 			
+		    //Creo Objeto Tabla
+		    Tabla tabla = (Tabla)clase.getAnnotation(Tabla.class);
 			//concateno el nombre de la tabla
-			query.append(((Tabla)clase.getAnnotation(Tabla.class)).nombre());
+			query.append(tabla.nombre());
 			
 			Constructor[] constructors = clase.getConstructors();
 			
@@ -193,32 +198,52 @@ public class Consultas {
 					}
 				}
 			}
+					
+			atributos = UBean.obtenerAtributos(objRetorno);
 			
-			query.append("where id=" + id);
+			for(Field f : atributos)
+			{
+				if (f.getAnnotation(Id.class) != null)
+				{
+					IdTraida = f;
+				}
+			}
+			
+			query.append(" where " + IdTraida.getName() + " = " + id);
+			
+			System.out.println(query.toString());
 			try {
-				PreparedStatement st = connection.prepareStatement("select * from mitabla");
+				PreparedStatement st = connection.prepareStatement(query.toString());
 				ResultSet queryRes = st.executeQuery();
+				
+				while(queryRes.next())
+				{
+					for(Field f : atributos)
+					{
+						if(f.getAnnotation(Columna.class) != null)
+						{
+							UBean.ejecutarSet(objRetorno,f.getName(), queryRes.getObject(f.getAnnotation(Columna.class).nombre()));
+						}
+					}
+				}
+				
+				UBean.ejecutarSet(objRetorno,IdTraida.getName(),id);
+				System.out.println(objRetorno);
+				
+				return objRetorno;
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-		/*	try {
-				for (Field field : atributos) {
-					if(field.getAnnotation(Id.class) != null) {
-						id = (Integer) UBean.ejecutarGet(o, field.getName());
-					}
-				} 
-				query.append(" where id=" +  id );
-				System.out.println(query.toString());
-				PreparedStatement st = connection.prepareStatement(query.toString());
-				st.execute();
+			try {
 				connection.close();
-			} 	
-			catch (SecurityException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}   */ 
-		return objRetorno;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		return null;
 		}
 }

@@ -15,8 +15,11 @@ public class MainClass {
 		
 		
 		
+		Integer miId=3;
 		
-		Consultas.eliminar(p);
+		Persona P= (Persona)Consultas.obtenerPorId(Persona.class, miId);
+		
+		p.toString();
 		
 	//	List<Field> listaAtri = new ArrayList<Field>();
 	//	listaAtri = UBean.obtenerAtributos(p);

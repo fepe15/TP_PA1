@@ -6,7 +6,7 @@ import Anotaciones.Id;;
 @Tabla (nombre="sys_persona")
 public class Persona {
 	
-	@Id
+	@Id(nombre="Id")
 	private Integer Id;
 	
 	@Columna(nombre="nombre")
@@ -16,7 +16,7 @@ public class Persona {
 	private String apellido;
 	
 	@Columna(nombre="dni")
-	private int dni;
+	private Integer dni;
 	
 	public String getNombre() {
 		return nombre;
@@ -36,11 +36,16 @@ public class Persona {
 	public void setId(Integer id) {
 		Id = id;
 	}
-	public int getDni() {
+	public Integer getDni() {
 		return dni;
 	}
-	public void setDni(int dni) {
+	public void setDni(Integer dni) {
 		this.dni = dni;
 	}
-
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "Nombre: " + this.nombre + " Apellido: " + this.apellido + " DNI: " + this.dni;
+	}
 }
